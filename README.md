@@ -290,7 +290,7 @@ sudo docker compose -f docker-compose.dev.yml --env-file .env.development up --b
 
 ```
 ## Production
-sudo docker compose -f docker-compose-prod.yml --env-file .env.production up --build
+sudo docker compose -f docker-compose.prod.yml --env-file .env.production up --build
 
 
 ---
