@@ -10,7 +10,8 @@ import {
   distributeCarte,
   getCarte,
   updateCarteByUniqueCodes,          // ✅ contrôleur pour obtenir une carte
-  searchCarte,        // ✅ contrôleur pour recherche
+  searchCarte,
+  getCarteStatisticsController        // ✅ contrôleur pour recherche
 } from "../controllers/carteProduction.controller";
 
 const router = Router();
@@ -42,5 +43,10 @@ router.put("/carte/:unique_code", verifyToken, updateCarteByUniqueCodes);
 
 /* --------------------------------------------- 🚚 Distribution de carte ------------------------------------------------ */
 router.put("/carte/distribute/:unique_code", verifyToken, distributeCarte);
+
+// Route statistiques
+router.get("/carte/statistiques", getCarteStatisticsController);
+
+
 
 export default router;

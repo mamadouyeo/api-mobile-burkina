@@ -401,3 +401,34 @@ export async function searchCarteProductions(filters: {
 }
 
 
+/* --------------------------------------------- 📊 Statistiques sur les cartes ------------------------------------------------ */
+export async function getCarteStatistics() {
+  try {
+    const pool = await getConnection();
+    const result = await pool.request().query(`
+      SELECT
+        COUNT(*) AS total_cartes,
+        SUM(CASE WHEN is_produced = 1 THEN 1 ELSE 0 END) AS total_produites,
+        SUM(CASE WHEN is_distributed = 1 THEN 1 ELSE 0 END) AS total_distribuees,
+        SUM(CASE WHEN is_produced = 0 OR is_produced IS NULL THEN 1 ELSE 0 END) AS total_en_attente,
+        SUM(CASE WHEN is_produced = 1 AND (is_distributed = 0 OR is_distributed IS NULL) THEN 1 ELSE 0 END) AS produites_non_distribuees
+      FROM employee_details;
+    `);
+
+    const stats = result.recordset[0];
+
+    return {
+      success: true,
+      data: {
+        total_cartes: stats.total_cartes || 0,
+        total_produites: stats.total_produites || 0,
+        total_distribuees: stats.total_distribuees || 0,
+        total_en_attente: stats.total_en_attente || 0,
+        produites_non_distribuees: stats.produites_non_distribuees || 0,
+      },
+    };
+  } catch (err) {
+    console.error("Erreur getCarteStatistics:", err);
+    throw err;
+  }
+}

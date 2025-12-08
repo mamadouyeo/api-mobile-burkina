@@ -6,6 +6,7 @@ import {
   searchCarteProductions,
   getAllCarteProductions,
   updatePhotoByUniqueCode,
+  getCarteStatistics
 } from "../services/production.service";
 
 /** GET /api/carteproductions */
@@ -234,5 +235,26 @@ export const updateCarteByUniqueCodes = async (req: Request, res: Response) => {
   } catch (err) {
     console.error("Erreur updateCarteController:", err);
     return res.status(500).json({ success: false, message: "Erreur serveur lors de la mise à jour", error: err });
+  }
+};
+/** GET /api/carteproductions/statistics */
+export const getCarteStatisticsController = async (req: Request, res: Response) => {
+  try {
+    const stats = await getCarteStatistics();
+
+    return res.status(200).json({
+      success: true,
+      message: "Statistiques récupérées avec succès",
+      data: stats.data,
+    });
+
+  } catch (error) {
+    console.error("Erreur controller getCarteStatistics:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Erreur serveur lors de la récupération des statistiques",
+      error,
+    });
   }
 };
