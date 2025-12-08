@@ -142,6 +142,19 @@ interface GetCarteParams {
   is_distributed?: string;
   is_produced?: string;
 }
+function formatDate(date: any, format: "DD/MM/YYYY" | "YYYY-MM-DD" = "DD/MM/YYYY") {
+  if (!date) return null;
+
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return null;
+
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+
+  if (format === "YYYY-MM-DD") return `${year}-${month}-${day}`;
+  return `${day}/${month}/${year}`;
+}
 
 
 
@@ -157,8 +170,13 @@ export async function getCarteByUniqueCode(unique_code: string): Promise<CartePr
     if (result.recordset.length === 0) return null;
 
     const carte = result.recordset[0] as CarteProduction;
+
+    // Convertir les images
     bufferToBase64Field(carte, "photo");
     bufferToBase64Field(carte, "signature");
+
+    // Formater toutes les dates en JJ-MM-AAAA
+    formatDate(carte);
 
     // Normalisation BIT → booléen
     carte.is_produced = carte.is_produced === true || carte.is_produced === 1;
@@ -170,6 +188,7 @@ export async function getCarteByUniqueCode(unique_code: string): Promise<CartePr
     throw err;
   }
 }
+
 
 export async function getAllCarteProductions({ page, limit, is_distributed, is_produced }: GetCarteParams) {
   try {
