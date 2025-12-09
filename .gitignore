@@ -1,6 +1,6 @@
 /.dockerignore
-/.env.development
-/.env.production
-/dist
+.env.development
+.env.production
+dist
 /node_modules
 /package-lock.json
