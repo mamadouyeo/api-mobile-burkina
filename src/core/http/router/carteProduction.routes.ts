@@ -45,7 +45,7 @@ router.put("/carte/:unique_code", verifyToken, updateCarteByUniqueCodes);
 router.put("/carte/distribute/:unique_code", verifyToken, distributeCarte);
 
 // Route statistiques
-router.get("/carte/statistiques", getCarteStatisticsController);
+router.get("/statistiques", getCarteStatisticsController);
 
 
 

@@ -156,6 +156,22 @@ function formatDate(date: any, format: "DD/MM/YYYY" | "YYYY-MM-DD" = "DD/MM/YYYY
   return `${day}/${month}/${year}`;
 }
 
+function formatAllDates(obj: any) {
+  const dateFields = [
+    "dob", "fathers_dob", "mothers_dob",
+    "identity_established_date", "payment_date",
+    "receipt_withdrawal_date", "issuing_date_time",
+    "date_time", "syn_date_time", "centralise_datetime",
+    "reg_start_time", "reg_end_time", "renewal_date_time",
+    "recentralize_date_time", "production_date", "distribution_date"
+  ];
+
+  for (const field of dateFields) {
+    if (obj[field]) {
+      obj[field] = formatDate(obj[field], "DD/MM/YYYY"); // ou "DD-MM-YYYY"
+    }
+  }
+}
 
 
 /* --------------------------------------------- 🔍 Obtenir une carte par unique_code ------------------------------------------------ */
@@ -176,7 +192,7 @@ export async function getCarteByUniqueCode(unique_code: string): Promise<CartePr
     bufferToBase64Field(carte, "signature");
 
     // Formater toutes les dates en JJ-MM-AAAA
-    formatDate(carte);
+    formatAllDates(carte);
 
     // Normalisation BIT → booléen
     carte.is_produced = carte.is_produced === true || carte.is_produced === 1;
@@ -190,7 +206,12 @@ export async function getCarteByUniqueCode(unique_code: string): Promise<CartePr
 }
 
 
-export async function getAllCarteProductions({ page, limit, is_distributed, is_produced }: GetCarteParams) {
+export async function getAllCarteProductions({
+  page,
+  limit,
+  is_distributed,
+  is_produced,
+}: GetCarteParams) {
   try {
     const pool = await getConnection();
     const offset = (page - 1) * limit;
@@ -249,6 +270,9 @@ export async function getAllCarteProductions({ page, limit, is_distributed, is_p
     const cartes = result.recordset.map((r: any) => {
       bufferToBase64Field(r, "photo");
       bufferToBase64Field(r, "signature");
+
+      // Formater toutes les dates en JJ/MM/AAAA
+      formatAllDates(r);
 
       // Normalisation BIT → booléen
       r.is_produced = r.is_produced === true || r.is_produced === 1;
